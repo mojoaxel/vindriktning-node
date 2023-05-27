@@ -4,6 +4,28 @@ This is an experiment to read the serial data from the "PM1006" LED Particle Sen
 
 ![image](https://github.com/mojoaxel/vindriktning-node/assets/600565/df027291-2160-4b9b-bcda-f50ca15b55b0)
 
+## Setup
+
+First make sure to adjust `SERIAL_PORT` in [index.js](index.js). On windows this might be something like "COM3" instead.
+
+```
+npm install
+npm start
+```
+
+Output:
+```
+serialport connection to "/dev/ttyUSB0" opened
+PM1.0: 1478 µg/m³, PM2.5: 13 µg/m³, PM10: 1 µg/m³
+PM1.0: 1480 µg/m³, PM2.5: 14 µg/m³, PM10: 1 µg/m³
+PM1.0: 1481 µg/m³, PM2.5: 14 µg/m³, PM10: 1 µg/m³
+PM1.0: 1482 µg/m³, PM2.5: 14 µg/m³, PM10: 1 µg/m³
+PM1.0: 1482 µg/m³, PM2.5: 14 µg/m³, PM10: 1 µg/m³
+PM1.0: 1482 µg/m³, PM2.5: 14 µg/m³, PM10: 1 µg/m³
+PM1.0: 1482 µg/m³, PM2.5: 14 µg/m³, PM10: 1 µg/m³
+PM1.0: 1482 µg/m³, PM2.5: 14 µg/m³, PM10: 1 µg/m³
+```
+
 ## Useful docs
 
 - [Sensor data format](https://lupyuen.github.io/articles/ikea#sensor-data-frame)
