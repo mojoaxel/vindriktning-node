@@ -20,7 +20,7 @@ parser.on('data', (data) => {
 			`PM10: ${measurements.pm10} ${PM1006.UNIT_UTF8}`,
 		].join(`, `));
 	} catch(err) {
-		console.warn(`error parsing PM1006 data: `, err.msg);
+		console.warn(`error parsing PM1006 data: `, err.message);
 	}
 })
 

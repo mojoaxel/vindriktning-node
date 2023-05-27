@@ -2,9 +2,22 @@
 
 This is an experiment to read the serial data from the "PM1006" LED Particle Sensor that is inside a Vindriktning from IKEA using node.js
 
+## Setup
+
+### Hardware
+
+First we need to connect a UART-to-USB. You should be able to find a simple board searching for the "FT232RL" chip.
+
+- Connect the GND pin to the GND pin of the FT232RL.
+- Connect the REST pin of the Vindriktning to the Rx pin of the FT232RL.
+- Optionally you could also connect Vcc (5V) to power the Vindriktning by the FT232RL board directly.
+
 ![image](https://github.com/mojoaxel/vindriktning-node/assets/600565/df027291-2160-4b9b-bcda-f50ca15b55b0)
 
-## Setup
+ Alternative Solutions might be:
+ - DIY "Feinstaubsensor Nova Fitness"
+
+### Software
 
 First make sure to adjust `SERIAL_PORT` in [index.js](index.js). On windows this might be something like "COM3" instead.
 
