@@ -2,6 +2,8 @@
 
 This is an experiment to read the serial data from the "PM1006" LED Particle Sensor that is inside a Vindriktning from IKEA using node.js
 
+![image](https://github.com/mojoaxel/vindriktning-node/assets/600565/df027291-2160-4b9b-bcda-f50ca15b55b0)
+
 ## Useful docs
 
 - [Sensor data format](https://lupyuen.github.io/articles/ikea#sensor-data-frame)
