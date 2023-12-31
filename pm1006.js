@@ -36,8 +36,8 @@ class PM1006 {
 	/**
 	 * Returns true if the checksum is valid.
 	 * The checksum is the sum of all bytes in the buffer 
-	 * with the last byte beeing the inverse of the sum.
-	 * This results in the sum of all bytes beeing 0.
+	 * with the last byte being the inverse of the sum.
+	 * This results in the sum of all bytes being 0.
 	 * 
 	 * @private
 	 * 

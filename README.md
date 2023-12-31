@@ -42,7 +42,7 @@ PM1.0: 1482 µg/m³, PM2.5: 14 µg/m³, PM10: 1 µg/m³
 ## Useful docs
 
 - [Sensor data format](https://lupyuen.github.io/articles/ikea#sensor-data-frame)
-- [LED Particle Sensor "PM1006" Datasheet (PDF)](http://www.jdscompany.co.kr/download.asp?gubun=07&filename=PM1006_LED_PARTICLE_SENSOR_MODULE_SPECIFICATIONS.pdf)
+- [LED Particle Sensor "PM1006" Datasheet (PDF)](https://cdn-learn.adafruit.com/assets/assets/000/122/217/original/PM1006_LED_PARTICLE_SENSOR_MODULE_SPECIFICATIONS-1.pdf?1688148991)
 
 ## Related projects
 

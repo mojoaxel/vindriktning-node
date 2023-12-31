@@ -15,6 +15,7 @@ parser.on('data', (data) => {
 	try {
 		const measurements = PM1006.parseDataFrame(data);
 		console.log([
+			`timestamp: ${new Date().toISOString()}`,
 			`PM1.0: ${measurements.pm1} ${PM1006.UNIT_UTF8}`,
 			`PM2.5: ${measurements.pm2_5} ${PM1006.UNIT_UTF8}`,
 			`PM10: ${measurements.pm10} ${PM1006.UNIT_UTF8}`,
