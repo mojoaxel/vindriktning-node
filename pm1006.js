@@ -85,7 +85,7 @@ class PM1006 {
 			throw new Error('invalid buffer size');
 		}
 		if (!this.#ifHeaderValid(buffer)) {
-			throw new Error('invalid header');
+			throw new Error(`invalid header: ${buffer.map(b => b.toString(16)).join(' ')}`);
 		}
 		if (!this.#ifChecksumValid(buffer)) {
 			throw new Error('invalid payload');
