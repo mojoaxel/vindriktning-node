@@ -1,0 +1,214 @@
+<DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.rawgit.com/Chalarangelo/mini.css/v3.0.1/dist/mini-default.min.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@^3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@^2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@^1"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <figure>
+                    <canvas id="myChart"></canvas>
+                    <!--
+                    <p><b>The current guidelines state that annual average concentrations of PM2.5 should not exceed 5 µg/m3, while 24-hour average exposures should not exceed 15 µg/m3 more than 3 - 4 days per year.</b></p>
+                    <p>Interim targets have been set to support the planning of incremental milestones toward cleaner air, particularly for cities, regions and countries that are struggling with high air pollution levels. For PM2.5 these are:
+                        <ul>
+                            <li>35 µg/m3 annual mean, 75 µg/m3 24-hour mean.</li>
+                            <li>25 µg/m3 annual mean, 50 µg/m3 24-hour mean.</li>
+                            <li>15 µg/m3 annual mean, 37.5 µg/m3 24-hour mean.</li>
+                            <li>10 µg/m3 annual mean, 25 µg/m3 24-hour mean.</li>
+                        </ul>
+                    </p>
+                    -->
+                    <p><b>The recommended guideline levels for PM10 (particulate matter with a diameter of 10 microns or less) are concentrations of 15 µg/m3 annual mean, 45 µg/m3 24-hour mean.</b></p>
+                </figure>
+            </div>
+        </div>
+    </div>
+    <script>
+        async function fetchData() {
+            const response = await fetch('/api/measurements');
+            const data = await response.json();
+            return data;
+        }
+
+        function drawChart(data) {
+            const minTimestamp = moment(data[0].timestamp);
+            const maxTimestamp = moment(data[data.length - 1].timestamp);
+            const labels = data.map(d => moment(d.timestamp));
+            var ctx = document.getElementById("myChart").getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'line',
+                responsive: true,
+                data: {
+                    labels,
+                    datasets: [
+                    {
+                        label: 'WHO target',
+                        data: [
+                            {
+                                x: minTimestamp,
+                                y: 5
+                            },
+                            {
+                                x: maxTimestamp,
+                                y: 5
+                            },
+                        ],
+                        backgroundColor: 'green',
+                        borderColor: 'green',
+                        stepped: false,
+                        stack: 'line',
+                        borderWidth: 1,
+                        pointRadius: 0,
+                        fill: false,
+                    },
+                    {
+                        label: 'WHO max limit (3-4 day/year)',
+                        data: [
+                            {
+                                x: minTimestamp,
+                                y: 45
+                            },
+                            {
+                                x: maxTimestamp,
+                                y: 45
+                            },
+                        ],
+                        backgroundColor: 'red',
+                        borderColor: 'red',
+                        stepped: false,
+                        stack: 'line',
+                        borderWidth: 1,
+                        pointRadius: 0,
+                        fill: false,
+                    },
+                    ...[...Array(4).keys()].map(i => {
+                        return {
+                            label: `WHO 1h limit (interim target ${i + 1})`,
+                            data: [
+                                {
+                                    x: minTimestamp,
+                                    y: [150, 100, 75, 50][i]
+                                },
+                                {
+                                    x: maxTimestamp,
+                                    y: [150, 100, 75, 50][i]
+                                },
+                            ],
+                            backgroundColor: `rgba(255, 0, 0, ${0.8-0.1*i})`,
+                            borderColor: `rgba(255, 0, 0, ${0.8-0.1*i})`,
+                            stepped: false,
+                            stack: 'line',
+                            borderWidth: 1,
+                            pointRadius: 0,
+                            fill: false,
+                        }
+                    }),
+                    /*
+                    {
+                        label: 'PM1',
+                        data: data.map(d => d.pm1),
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255,99,132,1)',
+                        stepped: false,
+                        stack: 'line',
+                        borderWidth: 1,
+                        pointRadius: 0,
+                        fill: true,
+                    },
+                    */
+                   /*
+                    {
+                        label: 'PM2.5',
+                        data: data.map(d => d.pm2_5),
+                        backgroundColor: 'rgba(0, 0, 255, 0.2)',
+                        borderColor: 'rgba(0, 0, 255, 1)',
+                        stepped: false,
+                        stack: 'line',
+                        borderWidth: 1,
+                        pointRadius: 0,
+                        fill: true,
+                    },
+                    */
+                    {
+                        label: 'PM10',
+                        data: data.map(d => d.pm10),
+                        backgroundColor: 'rgba(0, 0, 255, 0.2)',
+                        borderColor: 'rgba(0, 0, 255, 1)',
+                        stepped: true,
+                        stack: 'line',
+                        borderWidth: 1,
+                        pointRadius: 0,
+                        fill: true,
+                        
+                    },
+                    {
+                        type: 'bar',
+                        label: 'new year',
+                        data: [{
+                            x: moment("2024-01-01 00:00:00"),
+                            y: 450
+                        }],
+                        backgroundColor: 'black',
+                        maxBarThickness: 2,
+                        
+                    }
+                    ]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: 'hour',
+                                displayFormats: {
+                                    hour: 'DD.12 - HH:00',
+                                    minute: 'HH:MM:SS',
+                                }
+                            },
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                filter: function(item, chart) {
+                                    // Logic to remove a particular legend item goes here
+                                    return (item.text !== 'new year' && !item.text.startsWith('WHO'));
+                                }
+                            }
+                        }
+                    }
+                },
+                annotation: {
+                  annotations: [
+                    {
+                      type: "line",
+                      mode: "vertical",
+                      scaleID: "x-axis-0",
+                      borderColor: "red",
+                      label: {
+                        content: "",
+                        enabled: true,
+                        position: "top"
+                      }
+                    }
+                  ]
+                }
+            });
+        }
+
+        async function main() {
+            const data = await fetchData();
+            drawChart(data);
+        }
+
+        main();
+    </script>
+</body>
+</html>
