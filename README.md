@@ -21,13 +21,14 @@ First we need to connect a UART-to-USB. You should be able to find a simple boar
 
 First make sure to adjust `SERIAL_PORT` in [index.js](index.js). On windows this might be something like "COM3" instead.
 
-```
+```bash
 npm install
 npm start
 ```
 
 Output:
-```
+
+```bash
 serialport connection to "/dev/ttyUSB0" opened
 PM1.0: 1478 µg/m³, PM2.5: 13 µg/m³, PM10: 1 µg/m³
 PM1.0: 1480 µg/m³, PM2.5: 14 µg/m³, PM10: 1 µg/m³
@@ -38,6 +39,14 @@ PM1.0: 1482 µg/m³, PM2.5: 14 µg/m³, PM10: 1 µg/m³
 PM1.0: 1482 µg/m³, PM2.5: 14 µg/m³, PM10: 1 µg/m³
 PM1.0: 1482 µg/m³, PM2.5: 14 µg/m³, PM10: 1 µg/m³
 ```
+
+## Charts
+
+```bash
+npm run charts
+```
+
+![cli charts](https://github.com/user-attachments/assets/aa478822-522c-44b7-bcc0-013fa6d763b0)
 
 ## Useful docs
 
