@@ -3,7 +3,7 @@ const { SerialPort } = require('serialport');
 const { ByteLengthParser } = require('@serialport/parser-byte-length');
 const PM1006 = require('./pm1006');
 const blessed = require('blessed');
-const contrib = require('blessed-contrib');
+const charts = require('blessed-contrib');
 const chalk = require('chalk').default;
 
 const MAX_POINTS = 50;
@@ -15,20 +15,20 @@ port.on('close', () => console.log(`serialport connection to "${SERIAL_PORT}" cl
 
 // Create screen and charts
 const screen = blessed.screen();
-const grid = new contrib.grid({ rows: 12, cols: 12, screen: screen });
-const linePM1 = grid.set(0, 0, 4, 12, contrib.line, {
+const grid = new charts.grid({ rows: 12, cols: 12, screen: screen });
+const linePM1 = grid.set(0, 0, 4, 12, charts.line, {
 	label: chalk.cyan('PM1.0 Measurements'),
-	showLegend: false,
+	showLegend: true,
 	legend: { width: 10 }
 });
-const linePM25 = grid.set(4, 0, 4, 12, contrib.line, {
+const linePM25 = grid.set(4, 0, 4, 12, charts.line, {
 	label: chalk.magenta('PM2.5 Measurements'),
-	showLegend: false,
+	showLegend: true,
 	legend: { width: 10 }
 });
-const linePM10 = grid.set(8, 0, 4, 12, contrib.line, {
+const linePM10 = grid.set(8, 0, 4, 12, charts.line, {
 	label: chalk.yellow('PM10 Measurements'),
-	showLegend: false,
+	showLegend: true,
 	legend: { width: 10 }
 });
 
@@ -50,21 +50,21 @@ function updateChart() {
 	readData();
 	linePM1.setData([
 		{
-			title: chalk.green('PM1.0'),
+			title: 'PM1.0',
 			x: timestamps.length ? timestamps : ['No Data'],
 			y: pm1Values.length ? pm1Values : [0]
 		}
 	]);
 	linePM25.setData([
 		{
-			title: chalk.magenta('PM2.5'),
+			title: 'PM2.5',
 			x: timestamps.length ? timestamps : ['No Data'],
 			y: pm25Values.length ? pm25Values : [0]
 		}
 	]);
 	linePM10.setData([
 		{
-			title: chalk.yellow('PM10'),
+			title: 'PM10',
 			x: timestamps.length ? timestamps : ['No Data'],
 			y: pm10Values.length ? pm10Values : [0]
 		}
@@ -76,20 +76,16 @@ function updateChart() {
 
 const parser = port.pipe(new ByteLengthParser({ length: PM1006.FRAME_LENGTH }));
 parser.on('data', (data) => {
-	try {
-		const measurements = PM1006.parseDataFrame(data);
-		const timestamp = new Date().toLocaleTimeString();
-		chartBuffer.push({
-			timestamp,
-			pm1: measurements.pm1,
-			pm2_5: measurements.pm2_5,
-			pm10: measurements.pm10
-		});
-		if (chartBuffer.length > MAX_POINTS) chartBuffer.shift();
-		updateChart();
-	} catch (err) {
-		// Optionally log parse errors
-	}
+	const measurements = PM1006.parseDataFrame(data);
+	const timestamp = new Date().toLocaleTimeString();
+	chartBuffer.push({
+		timestamp,
+		pm1: measurements.pm1,
+		pm2_5: measurements.pm2_5,
+		pm10: measurements.pm10
+	});
+	if (chartBuffer.length > MAX_POINTS) chartBuffer.shift();
+	updateChart();
 });
 
 // Quit on Escape, q, or Ctrl-C

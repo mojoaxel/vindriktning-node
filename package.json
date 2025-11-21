@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js",
+    "charts": "nodemon charts.js",
     "server": "nodemon server.js"
   },
   "author": "mojoaxel <dev@wunschik.net>",
