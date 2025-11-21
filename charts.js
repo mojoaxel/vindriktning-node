@@ -1,13 +1,17 @@
 #!/usr/bin/env node
-const fs = require('fs');
-const path = require('path');
+const { SerialPort } = require('serialport');
+const { ByteLengthParser } = require('@serialport/parser-byte-length');
+const PM1006 = require('./pm1006');
 const blessed = require('blessed');
 const contrib = require('blessed-contrib');
 const chalk = require('chalk').default;
 
-const DATA_FILE = path.join(__dirname, 'data.csv');
-const REFRESH_INTERVAL = 1000; // ms
 const MAX_POINTS = 50;
+
+const SERIAL_PORT = '/dev/ttyUSB0';
+const port = new SerialPort({ path: SERIAL_PORT, baudRate: PM1006.BAUDRATE });
+port.on('open', () => console.log(`serialport connection to "${SERIAL_PORT}" opened`));
+port.on('close', () => console.log(`serialport connection to "${SERIAL_PORT}" closed`));
 
 // Create screen and chart
 const screen = blessed.screen();
@@ -21,31 +25,11 @@ const line = grid.set(0, 0, 12, 12, contrib.line, {
 let timestamps = [];
 let pm1Values = [];
 
+let chartBuffer = [];
+
 function readData() {
-  if (!fs.existsSync(DATA_FILE)) {
-    timestamps = [];
-    pm1Values = [];
-    return;
-  }
-  const content = fs.readFileSync(DATA_FILE, 'utf8').trim();
-  if (!content) {
-    timestamps = [];
-    pm1Values = [];
-    return;
-  }
-  const lines = content.split('\n');
-  // Skip header row if present
-  const dataLines = lines[0].startsWith('timestamp') ? lines.slice(1) : lines;
-  const lastLines = dataLines.slice(-MAX_POINTS);
-  const data = lastLines.map(line => {
-    const parts = line.split(';');
-    return {
-      timestamp: parts[0],
-      pm1: parseFloat(parts[1])
-    };
-  });
-  timestamps = data.map(d => d.timestamp);
-  pm1Values = data.map(d => d.pm1);
+  timestamps = chartBuffer.map(d => d.timestamp);
+  pm1Values = chartBuffer.map(d => d.pm1);
 }
 
 function updateChart() {
@@ -61,13 +45,22 @@ function updateChart() {
 }
 
 // Initial chart update
-updateChart();
 
-// Refresh chart periodically
-const interval = setInterval(updateChart, REFRESH_INTERVAL);
+const parser = port.pipe(new ByteLengthParser({ length: PM1006.FRAME_LENGTH }));
+parser.on('data', (data) => {
+  try {
+    const measurements = PM1006.parseDataFrame(data);
+    const timestamp = new Date().toLocaleTimeString();
+    chartBuffer.push({ timestamp, pm1: measurements.pm1 });
+    if (chartBuffer.length > MAX_POINTS) chartBuffer.shift();
+    updateChart();
+  } catch (err) {
+    // Optionally log parse errors
+  }
+});
 
 // Quit on Escape, q, or Ctrl-C
 screen.key(['escape', 'q', 'C-c'], function() {
-  clearInterval(interval);
+  port.close();
   return process.exit(0);
 });
